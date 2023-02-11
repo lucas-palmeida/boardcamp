@@ -19,7 +19,7 @@ export async function insertGame(req, res) {
 
         const result = await db.query('INSERT INTO games (name, image, "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4)', [name, image, stockTotal, pricePerDay]);
         console.log(result);
-        return res.send("201");
+        return res.sendStatus(201);
         
     } catch (error) {
         return res.status(500).send(error.message);
