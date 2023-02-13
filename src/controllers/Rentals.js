@@ -60,8 +60,20 @@ export async function insertRental(req, res) {
 }
 
 export async function closeRental(req, res) {
+    const id = req.params.id;
+
     try {
+        const getRental = await db.query('SELECT * FROM rentals WHERE id = $1', [id]);
         
+        if(!getRental.rows[0]) return res.status(404).send("Não existe aluguel com o n° informado.");
+
+        if(getRental.rows[0].returnDate !== null) return res.status(400).send("Aluguel já foi finalizado.");
+
+        const returnDate = dayjs(), diffDays = returnDate.diff(getRental.rows[0].rentDate, 'day'), delayFee = diffDays > 0 ? diffDays * getRental.rows[0].pricePerDay : 0;
+        
+        const result = await db.query('UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3', [returnDate, delayFee, id]);
+        console.log(result);
+        return res.sendStatus(200);
     } catch (error) {
         return res.status(500).send(error.message);
     }
