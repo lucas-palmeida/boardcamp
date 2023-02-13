@@ -69,7 +69,9 @@ export async function closeRental(req, res) {
 
         if(getRental.rows[0].returnDate !== null) return res.status(400).send("Aluguel já foi finalizado.");
 
-        const returnDate = dayjs(), diffDays = returnDate.diff(getRental.rows[0].rentDate, 'day'), delayFee = diffDays > 0 ? diffDays * getRental.rows[0].pricePerDay : 0;
+        const getGame = await db.query('SELECT * FROM games WHERE id = $1', [getRental.rows[0].gameId]);
+
+        const returnDate = dayjs(), diffDays = returnDate.diff(getRental.rows[0].rentDate, 'day'), delayFee = diffDays > 0 ? diffDays * getGame.rows[0].pricePerDay : 0;
         
         await db.query('UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3', [returnDate, delayFee, id]);
 
