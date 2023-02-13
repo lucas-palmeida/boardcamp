@@ -31,7 +31,7 @@ export async function insertCustomer(req, res) {
         
         if (customerExists.rows[0]) return res.status(409).send("O cliente informado já existe!");
 
-        const result = await db.query('INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)', [name, phone, cpf, birthday]);
+        await db.query('INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)', [name, phone, cpf, birthday]);
         
         return res.sendStatus(201);
     } catch (error) {
@@ -52,7 +52,7 @@ export async function updateCustomer(req, res) {
         
         if (searchCustomerByCpf.rows[0]) return res.status(409).send("Dados inválidos!");
 
-        const result = await db.query('UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5', [name, phone, cpf, birthday, id]);
+        await db.query('UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5', [name, phone, cpf, birthday, id]);
         
         return res.sendStatus(200);
     } catch (error) {
